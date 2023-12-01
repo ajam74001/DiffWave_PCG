@@ -1,28 +1,14 @@
-# Copyright 2020 LMNT, Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
 
 import numpy as np
 import os
 import torch
 import torchaudio
-
+from glob import glob
 from argparse import ArgumentParser
 
 from diffwave.params import AttrDict, params as base_params
 from diffwave.model import DiffWave
-
+from tqdm import tqdm
 
 models = {}
 
@@ -90,12 +76,21 @@ def predict(spectrogram=None, model_dir=None, params=None, device=torch.device('
 
 
 def main(args):
-  if args.spectrogram_path:
-    spectrogram = torch.from_numpy(np.load(args.spectrogram_path, allow_pickle=True))
-  else:
-    spectrogram = None
-  audio, sr = predict(spectrogram, model_dir=args.model_dir, fast_sampling=args.fast, params=base_params)
-  torchaudio.save(args.output, audio.cpu(), sample_rate=sr)
+  paths = glob(os.path.join(args.spectrogram_path, '*.wav.spec.npy'))  
+  indx = 1
+  output_dir = args.output
+  for p in tqdm(paths):
+    spectrogram = torch.from_numpy(np.load(p, allow_pickle=True))
+    audio, sr = predict(spectrogram, model_dir=args.model_dir, fast_sampling=args.fast, params=base_params)
+    torchaudio.save(os.path.join(output_dir,f"{indx}.wav"), audio.cpu(), sample_rate=sr)
+    indx = indx + 1
+
+#   if args.spectrogram_path:
+#     spectrogram = torch.from_numpy(np.load(args.spectrogram_path, allow_pickle=True))
+#   else:
+#     spectrogram = None
+#   audio, sr = predict(spectrogram, model_dir=args.model_dir, fast_sampling=args.fast, params=base_params)
+#   torchaudio.save(args.output, audio.cpu(), sample_rate=sr)
 
 
 if __name__ == '__main__':

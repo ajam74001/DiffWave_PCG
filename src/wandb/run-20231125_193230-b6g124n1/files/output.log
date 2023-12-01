@@ -1,0 +1,38 @@
+(32806, 110) 0
+(24470, 110) 215
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+NaN detected in inputs or labels
+Traceback (most recent call last):
+  File "disc_score_eval.py", line 117, in <module>
+    loss.backward()
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/torch/_tensor.py", line 492, in backward
+    torch.autograd.backward(
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/torch/autograd/__init__.py", line 251, in backward
+    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt

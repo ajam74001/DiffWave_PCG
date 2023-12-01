@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "disc_score_eval.py", line 22, in <module>
+    real = pd.read_csv(root_dir+'real_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna()
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 912, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 577, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1407, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1661, in _make_engine
+    self.handles = get_handle(
+  File "/home/ainazj1/.conda/envs/diff-ts/lib/python3.8/site-packages/pandas/io/common.py", line 859, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3real_diffwave_final.csv'

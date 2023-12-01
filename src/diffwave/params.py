@@ -39,7 +39,7 @@ params = AttrDict(
     max_grad_norm=None,
 
     # Data params
-    sample_rate=22050,
+    sample_rate=4000, # this line is also adjusted 
     n_mels=80,
     n_fft=1024,
     hop_samples=256,
@@ -54,5 +54,6 @@ params = AttrDict(
     inference_noise_schedule=[0.0001, 0.001, 0.01, 0.05, 0.2, 0.5],
 
     # unconditional sample len
-    audio_len = 22050*5, # unconditional_synthesis_samples
+    audio_len = 4000*5, # unconditional_synthesis_samples
+    ### I need to customize this SR: 4000 Hz
 )
