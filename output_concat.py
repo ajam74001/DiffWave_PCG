@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from glob import glob
 import pandas as pd 
 
-
+# Dir to the file containing generated signals by diffwave model
 dir = '/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/output_diffwave'
 
 paths = glob(os.path.join(dir, '*.wav'))
