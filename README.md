@@ -2,7 +2,14 @@
 In this repository, you will find a Python implementation for synthesizing high-quality PCG signals using diffusion models. This work is based on [DiffWave](https://github.com/lmnt-com/diffwave/tree/master) repository. 
 ## Setup 
 Create conda environment with the Python version of 3.8.5. Install the requirements and the DiffWave library as follows:
-
+1. Requirements:
+```
+  'numpy',
+  'torch>=1.6',
+  'torchaudio>=0.9.0',
+  'tqdm'
+```
+2. DiffWave Installation: 
 ```
 pip install diffwave
 ```
