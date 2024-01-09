@@ -79,9 +79,13 @@ class Data_loader():
             # Convert the frequency bin to Hertz
             frequencies = librosa.fft_frequencies(sr=fs)
             highest_frequency = np.max(frequencies[max_bin]) # getting the highest frequency in the spectrum of the signal        ret['audio'] = librosa.resample(data['audio'], orig_sr=data['sr'], target_sr=highest_frequency*2)
-            print("highest_frequency", highest_frequency)
-            ret['audio'] = librosa.resample(audio, orig_sr= fs, target_sr=highest_frequency*2) # resampling procudure 
-            ret['sr'] = highest_frequency*2
+            # print("highest_frequency", highest_frequency*2)
+            # ret['audio'] = librosa.resample(audio, orig_sr= fs, target_sr=highest_frequency*2) # resampling procudure 
+            # ret['sr'] = highest_frequency*2
+            target_sr = int(round(highest_frequency * 2))
+            ret['audio'] = librosa.resample(audio, orig_sr=fs, target_sr=target_sr)
+            ret['sr'] = target_sr
+            print(target_sr)
         else:
             ret['audio'] = audio
             ret['sr'] = fs
@@ -89,13 +93,12 @@ class Data_loader():
         return ret
 # Run a Sample!
 # path_demo = "../../Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data.csv"
-path_sig = "/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_diffwave"
+###### for normal subjects 
+# path_sig = "/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_diffwave"
+##### for Abnormal subjects 
+path_sig = "/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_murmurs"
 data_sample = Data_loader(path_sig,  resample= True) # set resample to False and repeat 
-# data = data_sample.get_item(240)
 
-# print(data_sample.len())
-# print(max(data['audio']), min(data['audio']))
-# print(data['sr'])
 pattern = "*.wav"
 full_path_pattern = os.path.join(path_sig, pattern)
 wav_files = glob.glob(full_path_pattern)
@@ -108,4 +111,8 @@ for index in wav_file_names:
 
 flattened_data = [item for sublist in all_data_seg for item in sublist]
 print(pd.DataFrame(flattened_data).shape)
-pd.DataFrame(flattened_data).to_csv('/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/real_diffwave_final.csv')
+
+# Normal ones 
+# pd.DataFrame(flattened_data).to_csv('/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/real_diffwave_final.csv')
+# Abnormal ones 
+# pd.DataFrame(flattened_data).to_csv('/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/real_Abnormal_diffwave_final.csv')

@@ -2,9 +2,12 @@ import numpy as np
 import pandas as pd
 
 root_dir = '/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3'
-real = pd.read_csv(root_dir+'/real_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna()
-fake = pd.read_csv(root_dir+'/fake_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
-
+### For normal subjects 
+# real = pd.read_csv(root_dir+'/real_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna()
+# fake = pd.read_csv(root_dir+'/fake_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
+### For A|bnormal ones 
+real = pd.read_csv(root_dir+'/real_Abnormal_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
+fake = pd.read_csv(root_dir+'/fake_Abnormal_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
 
 def timeseries_to_hist(data):
     df_data=[]

@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import butter, filtfilt
 # the frequency range of normal PCG signals are 40-200 : so we want to keep this frequency range of the signals 
-def bandpass_filter(signal, fs,  lowcut=40, highcut=200, order=1): 
+def bandpass_filter(signal, fs,  lowcut=20, highcut=500, order=1): 
     """
     Apply a bandpass filter to the signal.
     

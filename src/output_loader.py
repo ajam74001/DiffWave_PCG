@@ -76,8 +76,9 @@ class Data_loader():
             frequencies = librosa.fft_frequencies(sr=fs)
             highest_frequency = np.max(frequencies[max_bin]) # getting the highest frequency in the spectrum of the signal        ret['audio'] = librosa.resample(data['audio'], orig_sr=data['sr'], target_sr=highest_frequency*2)
             print("highest_frequency", highest_frequency)
-            ret['audio'] = librosa.resample(audio, orig_sr= fs, target_sr=highest_frequency*2) # resampling procudure 
-            ret['sr'] = highest_frequency*2
+            target_sr = int(round(highest_frequency*2))
+            ret['audio'] = librosa.resample(audio, orig_sr= fs, target_sr=target_sr) # resampling procudure 
+            ret['sr'] = target_sr
         else:
             ret['audio'] = audio
             ret['sr'] = fs
@@ -86,19 +87,26 @@ class Data_loader():
         
 # Run a Sample!
 # path_demo = "../../Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data.csv"
-path_sig = "/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/output_diffwave"
-data_sample = Data_loader( path_sig,  resample= True) # set resample to False and repeat 
-data = data_sample.get_item(100)
+##### for normal subjects 
+# path_sig = "/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/output_diffwave"
+### for Abnormal subjects 
+path_sig = "/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/inference_murmur"
 
-print(data_sample.len())
-print(max(data['audio']), min(data['audio']))
-print(data['sr'])
-# all_data_seg = []
-# for index in range(1,data_sample.len()+1):
-#     data = data_sample.get_item(index)
-#     seg = segment(data['audio'])
-#     all_data_seg.append(seg)
+data_sample = Data_loader(path_sig,  resample= True) # set resample to False and repeat 
+# data = data_sample.get_item(100)
 
-# flattened_data = [item for sublist in all_data_seg for item in sublist]
-# print(pd.DataFrame(flattened_data).shape)
+# print(data_sample.len())
+# print(max(data['audio']), min(data['audio']))
+# print(data['sr'])
+all_data_seg = []
+for index in range(1,data_sample.len()+1):
+    data = data_sample.get_item(index)
+    seg = segment(data['audio'])
+    all_data_seg.append(seg)
+
+flattened_data = [item for sublist in all_data_seg for item in sublist]
+print(pd.DataFrame(flattened_data).shape)
+## for normal ones 
 # pd.DataFrame(flattened_data).to_csv('/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/fake_diffwave_final.csv')
+# for abnormal ones 
+pd.DataFrame(flattened_data).to_csv('/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/fake_Abnormal_diffwave_final.csv')

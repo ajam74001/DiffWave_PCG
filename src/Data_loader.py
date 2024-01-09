@@ -15,16 +15,31 @@ from filters import bandpass_filter # my files and functions
 import pywt
 from utilities import calculate_rmssd, zero_crossing_ratio, ratio_of_normal_peaks
 import soundfile as sf
+import tqdm as tqdm 
+import warnings
+warnings.filterwarnings("ignore")
 
 # TODO :add the resampling stuff here in the data loader : DONE!
 # TODO: add bandpass filter: DONE!
 # TODO: add the quality assesment to the loader: DONE! 
 class Data_loader():
-    def __init__(self, path_demo, path_sig, encode=True, resample=True):
+    def __init__(self, path_demo, path_sig,type, encode=True, resample=True):
         self.resample = resample
         self.path_sig = path_sig
+        self.type = type
         self.demo_data = pd.read_csv(path_demo) # example:~/courses/bio-sig/datasets/D1/physionet.org/files/circor-heart-sound/1.0.3/training_data.csv
-        self.subject_ids = self.demo_data[self.demo_data['Outcome'] == "Normal"]['Patient ID'] 
+        print(self.demo_data.columns)
+        # getting the normal ones 
+        if self.type == "Normal":
+            # self.subject_ids = self.demo_data[self.demo_data['Murmur'] == "Absent" ]['Patient ID'] 
+            self.subject_ids = self.demo_data[self.demo_data['Outcome'] == "Normal" ]['Patient ID'] 
+            # self.subject_ids = self.demo_data[(self.demo_data['Outcome'] == "Normal") & (self.demo_data['Murmur'] == "Absent") ]['Patient ID'] 
+        # getting the abnormal ones 
+        # print(self.demo_data['Outcome'].unique())
+        else:
+            # self.subject_ids = self.demo_data[self.demo_data['Murmur'] == "Present"]['Patient ID'] 
+            self.subject_ids = self.demo_data[self.demo_data['Outcome'] == "Abnormal"]['Patient ID'] 
+
         # getting all the subjects that all the recordings are available # check if only AV-PV-TV-MV has enough of data to proceed wiht 
         self.subject_ids = self.subject_ids.reset_index(drop=True)
         self.demo_data = self.demo_data[["Patient ID", "Murmur", "Outcome"]]
@@ -47,6 +62,7 @@ class Data_loader():
         try:
             audio , fs = librosa.load(f"{path_root}.wav", mono=True, sr=None)
             # print("fs", fs)
+            
         except FileNotFoundError:
             try:
                 path_root = f"{self.path_sig}/{self.subject_ids[index]}_{'PV'}"
@@ -64,59 +80,74 @@ class Data_loader():
                         audio , fs = librosa.load(f"{path_root}.wav", mono=True, sr=None)
                         # print("fs", fs)
                     except:
-                        pass
+                        print('File could not be found!')
+                        print(self.subject_ids[index])
+                        print(path_root)
         #### Check the quality of the signal and label it- 0: good , 1: corrupted
         ## the quality criteras are adopted from paper "Analysis of PCG signals using quality assessment and homomorphic filters for localization and classification of heart sounds"
-        coeffs = pywt.wavedec(audio, 'db1', level=2)
-        cA2, cD2, cD1 = coeffs  # cA2 is the approximation coefficients at level 2
-        if calculate_rmssd(cA2)> 0.1 or zero_crossing_ratio(cA2)>0.3 or ratio_of_normal_peaks(cA2, fs )>0.5: # threshold is coming from a paper 
-            ret['label']= 1 # signal is corrupted      
-        else:
-            ret['label']= 0
+        try:
+            coeffs = pywt.wavedec(audio, 'db1', level=2)
+            cA2, cD2, cD1 = coeffs  # cA2 is the approximation coefficients at level 2
+            if calculate_rmssd(cA2)> 0.1 or zero_crossing_ratio(cA2)>0.3 or ratio_of_normal_peaks(cA2, fs )>0.5: # threshold is coming from a paper (0.5, 0.8 for the normal case )
+                ret['label']= 1 # signal is corrupted      
+            else:
+                ret['label']= 0
 
-        # filtering the audio by a band pass filter 
-        audio = bandpass_filter(audio, fs)
-        # standardization the audio data 
-        audio = (audio - np.mean(audio))/ np.std(audio)
+            # filtering the audio by a band pass filter 
+            audio = bandpass_filter(audio, fs)
+            # standardization the audio data 
+            audio = (audio - np.mean(audio))/ np.std(audio)
+            if self.resample: 
+                # Compute the spectrogram of the audio signal to the aim of resampling 
+                audio = np.asfortranarray(audio)
+                D = np.abs(librosa.stft(audio))
+                # Find the frequency bin with the maximum energy
+                max_bin = np.argmax(D, axis=0)
+
+                # Convert the frequency bin to Hertz
+                frequencies = librosa.fft_frequencies(sr=fs)
+                highest_frequency = np.max(frequencies[max_bin]) # getting the highest frequency in the spectrum of the signal        ret['audio'] = librosa.resample(data['audio'], orig_sr=data['sr'], target_sr=highest_frequency*2)
+                # print("highest_frequency", highest_frequency)
+                target_sr = np.ceil(highest_frequency * 2)
+                ret['audio'] = librosa.resample(audio, orig_sr= fs, target_sr=target_sr) # resampling procudure 
+                ret['sr'] = target_sr
+
+            else:
+                ret['audio'] = audio
+                ret['sr'] = fs
+                ret['murmur'], ret['outcome'] = self.demo_data[self.demo_data['Patient ID']==self.subject_ids[index]][['Murmur', 'Outcome']].iloc[0]
+            return ret
+        except:
+            pass
         
-        if self.resample: 
-            # Compute the spectrogram of the audio signal to the aim of resampling 
-            audio = np.asfortranarray(audio)
-            D = np.abs(librosa.stft(audio))
-            # Find the frequency bin with the maximum energy
-            max_bin = np.argmax(D, axis=0)
+        
 
-            # Convert the frequency bin to Hertz
-            frequencies = librosa.fft_frequencies(sr=fs)
-            highest_frequency = np.max(frequencies[max_bin]) # getting the highest frequency in the spectrum of the signal        ret['audio'] = librosa.resample(data['audio'], orig_sr=data['sr'], target_sr=highest_frequency*2)
-            # print("highest_frequency", highest_frequency)
-            ret['audio'] = librosa.resample(audio, orig_sr= fs, target_sr=highest_frequency*2) # resampling procudure 
-            ret['sr'] = highest_frequency*2
-        else:
-            ret['audio'] = audio
-            ret['sr'] = fs
-        ret['murmur'], ret['outcome'] = self.demo_data[self.demo_data['Patient ID']==self.subject_ids[index]][['Murmur', 'Outcome']].iloc[0]
-        return ret
         
 # Run a Sample!
 path_demo = "../../Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data.csv"
 path_sig = "../../Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_wav"
-data_sample = Data_loader(path_demo, path_sig, resample= False) # set resample to False and repeat 
+data_sample = Data_loader(path_demo, path_sig, "Normal", resample= False) # set resample to False and repeat 
 data = data_sample.get_item(10)
 
 print(data_sample.len())
 
 
 
-# data_list = []
-# SR =[]
-# labels= []
-sample_rate = 4000
-for index in range(data_sample.len()):
-    data_item = data_sample.get_item(index)
-    if data_item['label'] == 0:
-        output_file = f'/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_diffwave/output_{index}.wav'
-        sf.write(output_file, data_item['audio'], sample_rate)
+# # data_list = []
+# # SR =[]
+# # labels= []
+# sample_rate = 4000
+# for index in range(data_sample.len()):
+#     # print(index)
+#     data_item = data_sample.get_item(index)
+#     try:
+#         if data_item['label'] == 0: ###### filtering the high quality ones 
+#             # print(data_item['sr'])
+#         # output_file = f'/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_diffwave/output_{index}.wav'
+#             output_file = f'/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3/training_data_murmurs/output_{index}.wav'
+#             sf.write(output_file, data_item['audio'], sample_rate)
+#     except:
+#         pass
 
 # # Process all instances in the dataset and collect data in a list
 # data_list = []

@@ -15,13 +15,15 @@ from torch.utils.data import TensorDataset, DataLoader
 from torch.utils.data import Dataset
 import wandb
 
-wandb.init(project='RNN-Diffwave', name='DiffWave-RNN_Classifier_balanced')
+wandb.init(project='RNN-Diffwave-Murmur', name='DiffWave-RNN_Classifier_balanced-Murmur')
 
 # Data real vs Data fake classifier - an offself one 
 root_dir = '/home/ainazj1/psanjay_ada/users/ainazj1/Datasets/physionet.org/files/circor-heart-sound/1.0.3'
-real = pd.read_csv(root_dir+'/real_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna()
+# real = pd.read_csv(root_dir+'/real_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna()
+# fake = pd.read_csv(root_dir+'/fake_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
 
-fake = pd.read_csv(root_dir+'/fake_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
+real = pd.read_csv(root_dir+'/real_Abnormal_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
+fake = pd.read_csv(root_dir+'/fake_Abnormal_diffwave_final.csv').drop('Unnamed: 0', axis=1).dropna() 
 
 print(real.shape, real.isna().sum().sum())
 print(fake.shape, fake.isna().sum().sum())

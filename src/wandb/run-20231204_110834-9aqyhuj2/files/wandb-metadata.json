@@ -1,0 +1,60 @@
+{
+    "os": "Linux-3.10.0-1160.95.1.el7.x86_64-x86_64-with-glibc2.17",
+    "python": "3.8.18",
+    "heartbeatAt": "2023-12-04T16:08:35.233688",
+    "startedAt": "2023-12-04T16:08:34.825253",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "disc_score_eval.py",
+    "codePathLocal": "disc_score_eval.py",
+    "codePath": "src/disc_score_eval.py",
+    "git": {
+        "remote": "https://github.com/ajam74001/DiffWave_PCG_Synthetic.git",
+        "commit": "46f32542ed7567ab5564da25bbf986551570f3a8"
+    },
+    "email": null,
+    "root": "/nfs/ada/psanjay/users/ainazj1/diffwave",
+    "host": "ada",
+    "username": "ainazj1",
+    "executable": "/home/ainazj1/.conda/envs/diff-ts/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 4,
+    "cpu_freq": {
+        "current": 2494.14,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2494.14,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2494.14,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2494.14,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2494.14,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 15.990234375,
+            "used": 7.205257415771484
+        }
+    },
+    "memory": {
+        "total": 11.73245620727539
+    }
+}
