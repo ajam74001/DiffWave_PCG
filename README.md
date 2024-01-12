@@ -54,5 +54,5 @@ python -m diffwave.inference --fast /path/to/model/dir --spectrogram_path /path/
 ```
 A sample of generation: 
 
-
+<img src="/diffwave_synth.png" width="400">
 
