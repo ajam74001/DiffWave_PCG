@@ -48,3 +48,11 @@ To monitor the learning progress, run the following command in another shell:
 tensorboard --logdir /path/to/model/dir --bind_all
 
 ```
+To run a demo:
+```
+python -m diffwave.inference --fast /path/to/model/dir --spectrogram_path /path/to/spectrograms/84805_AV.wav.spec.npy   -o output_sample.wav
+```
+A sample of generation: 
+
+
+
