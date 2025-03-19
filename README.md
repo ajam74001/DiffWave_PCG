@@ -56,3 +56,15 @@ A sample of generation:
 
 <img src="/diffwave_synth.png" width="400">
 
+### Citation:
+```
+@misc{jamshidi2024synthetictimeseriesdata,
+      title={Synthetic Time Series Data Generation for Healthcare Applications: A PCG Case Study}, 
+      author={Ainaz Jamshidi and Muhammad Arif and Sabir Ali Kalhoro and Alexander Gelbukh},
+      year={2024},
+      eprint={2412.16207},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2412.16207}, 
+}
+```
